@@ -6,11 +6,13 @@ All relevant functions are contained within the EDGARFetcher() function
 
 User must have the following information to process a request
 * email address
-* institution of employment (any institution will satisfy teh parameter)
+* institution of employment (any institution will satisfy the parameter)
 * request date in MMDDYYY format
 * form type (currently supports 10-Q and 10-K)
 * company stock ticker
 
 The program will fetch the most **recent** filing that satisfy the above parameters, i.e. if user punched in 04152024. and the relevant company's most recent filing was 04012024, it will fetch & parse those filings.
 
-Upon successful fetch request, program will parse all relevant sub-sections of the report. The user will than select the sub-sections that contain **tabular data only**, namely the consolodated financial statements. User will have to exercise his discretion in determining which subsection contains datatables.
+Upon successful fetch request, program will parse all relevant sub-sections of the report. The user will then select the sub-sections that contain **tabular data only**, namely the consolodated financial statements. User will have to exercise his/her/they discretion in determining which subsection contains datatables.
+
+When user see's "EDGAR request done", it indicated the fetch & parse steps were successfully executed
