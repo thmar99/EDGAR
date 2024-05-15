@@ -15,4 +15,4 @@ The program will fetch the most **recent** filing that satisfy the above paramet
 
 Upon successful fetch request, program will parse all relevant sub-sections of the report. The user will then select the sub-sections that contain **tabular data only**, namely the consolodated financial statements. User will have to exercise his/her/they discretion in determining which subsection contains datatables.
 
-When user see's "EDGAR request done", it indicated the fetch & parse steps were successfully executed
+When uses see "EDGAR requests done", it indicates the fetch & parse steps were successfully executed
