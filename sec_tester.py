@@ -283,32 +283,7 @@ def StructFinancials(report,headers):
 """-------------------------------------------STEP 5 (fetch $ structure financial data)-----------------------------------------------------------------"""
 
 def remChar(value):
-    '''remove specific strings mixed in with cells, and all subsequent characters''' 
-    '''if cell[0]=='-':
-        return '-' + re.sub(r'[^0-9.]', '', cell)  # Remove non-numeric characters but keep th negative sign
-    elif isinstance(cell, str):
-        return re.sub(r'[^0-9.]', '', cell) #Remove non-numeric characters
-    return cell'''
-    '''if value and isinstance(value, str):
-        numeric_value = re.sub(r'[^-0-9.]', '', value)  # Keep '-' and digits
-        if numeric_value and numeric_value[0] == '-':  # If '-' is at the start
-            return '-' + re.sub(r'[^0-9.]', '', numeric_value[1:])  # Keep digits after '-'
-        return numeric_value
-    return value'''
-    '''if value and isinstance(value, str):
-        # Remove characters like '$', ',', and other non-numeric symbols
-        numeric_value = re.sub(r'[^-0-9.]', '', value.replace(',', '').replace('$', ''))  
-        if numeric_value and numeric_value[0] == '-':  # If '-' is at the start
-            return '-' + re.sub(r'[^0-9.]', '', numeric_value[1:])  # Keep digits after '-'
-        return numeric_value
-    return value'''
-    '''if value and isinstance(value, str):
-        # Find the pattern for retaining the leading '-' before numeric values
-        numeric_value = re.sub(r'^(-?)(?=\d)', r'\1', value)
-        # Remove all non-numeric characters except the leading '-'
-        numeric_value = re.sub(r'[^\d.-]', '', numeric_value)
-        return numeric_value
-    return value'''
+    '''remove non numeric values, retaining +/- signs'''
     match = re.search(r'[-+]?\d*\.?\d+', value)
     if match:
         return value[:match.end()]
@@ -331,12 +306,6 @@ def CleanSheet(DataFrame):
     columns_to_drop = [col for col in DataFrame.columns if any(DataFrame[col].apply(lambda x: re.search(pattern, str(x))))]
     # strip non-numerical characters in the columns
     df_cleaned = DataFrame.drop(columns=columns_to_drop)
-    #print(type(df_cleaned.iloc[1,1]))
-    #df_cleaned.to_csv('filtered.csv')
-    #df_cleaned.iloc[:,1:].to_csv('ctu_filtered.csv',index=False)
-    #df_cleaned.iloc[:,1:] = df_cleaned.iloc[:,1:].applymap(remChar)
-    #df_cleaned.to_csv('mapped_filtered.csv')
-    #df_clean = df_cleaned.applymap(remChar)
 
     return df_cleaned
 
@@ -355,7 +324,6 @@ def CreateDataframe(financials,name):
     income_df = income_df.replace('[\$,)]','', regex=True )\
                         .replace( '[(]','-', regex=True)\
                         .replace( '', 'NaN', regex=True)
-    #income_df.to_csv('filtered'+name+'.csv')
 
     filtered_list = [s for s in income_header if all(word not in s for word in ["Ended", "Months", "Years"])]
     income_df.columns= filtered_list
@@ -370,11 +338,10 @@ def CreateDataframe(financials,name):
     income_df.iloc[:,0] = indexes'''
     income_df.iloc[:,1:] = income_df.iloc[:,1:].applymap(remChar)
     print(income_df)
-    #income_df.to_csv('raw_csv.csv',index=False)
-    #inc_df  = income_df.applymap(remChar)
     return income_df
 
 def EdgarFetcher(dates,tickr,frm):
+    '''main EDGA function '''
     #headers are prerequisite for SEC EDGAR requests
     headers = {'User-Agent':'Cornell University thm55@cornell.edu',"Accept-Encoding": "gzip, deflate"}
     print('running sec EDGAR requests')
@@ -385,20 +352,14 @@ def EdgarFetcher(dates,tickr,frm):
     cik = getCIK(ticker)
     formType = frm
     #Function Stack to arrive at desired filings. See function headers for description of what each achieves
-    #print('fetching entries')
     entries = FetchXml(cik,dateRange,formType,headers=headers)
-    #print('fetching master_list_xml') 
     master_list_xml = FetchReqFilings(entries)
-    #print('fetching list_of_keys') 
     list_of_keys = GetKeys(master_list_xml)
-    #print('fetching list_of_dates') 
     list_of_dates = GetDates(master_list_xml,keys=list_of_keys)
-    #print('fetching json_list') 
     json_list = ConvertFiling(master_list_xml)
-    #print('fetching master_reports') 
     master_reports = ReportPieces(json_list,keys=list_of_keys,dates=list_of_dates,headers=headers)
 
-    #Main event loop. This will display each section of the report and parse 
+    #Main event loop. This will display each sub-section of the report and parse 
     wanted = {} 
     for report in range(len(master_reports)):
         print('_'*100)
