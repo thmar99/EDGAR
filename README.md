@@ -1,6 +1,7 @@
 # EDGAR
 Project to webscrape SEC EDGAR database
 Credits: areeed1192 EDGAR queries available at: https://github.com/areed1192/sigma_coding_youtube/blob/master/python/python-finance/sec-web-scraping/Web%20Scraping%20SEC%20-%20EDGAR%20Queries.ipynb
+This program is an expansion of areed's work, designed to handle any 10-K or 10-Q format for any firm or industry
 
 All relevant functions are contained within the EDGARFetcher() function
 
